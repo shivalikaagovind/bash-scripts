@@ -1,0 +1,19 @@
+#!/bin/bash
+if [[ $# -lt 1 ]]; then 
+	echo "There is no command line argument" >&2 
+	exit 1
+else
+	testset="$1"
+fi
+
+while IFS= read -r line; do 
+	for stem in $line; do 
+		echo "Description for test case ${stem}:" 
+		file="${stem}.desc"
+		if [[ -f "$file" ]]; then
+			cat "$file"  
+		else
+			echo "${stem} No test description" 
+		fi 
+	done 
+done < "$testset"

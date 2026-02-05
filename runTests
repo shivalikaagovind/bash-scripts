@@ -1,0 +1,26 @@
+
+#!/bin/bash
+
+command="$1"
+testset="$2"
+tmp_out="$(mktemp)"
+trap 'rm -f "$tmp_out"' EXIT
+while IFR= read -r stem; do
+        file_in="${stem}.in"
+        file_out="${stem}.out"
+	file_args="${stem}.args"
+	args="$(cat "$file_args")"
+
+        "$command" $args<"$file_in">"$tmp_out"
+
+        if diff -wB "$tmp_out" "$file_out" > /dev/null; then
+                echo "Test ${stem} passed"
+        else
+                echo "Test ${stem} failed"
+                echo "Expected output:"
+                cat "$file_out"
+                echo "Acutal output:"
+                cat "$tmp_out"
+        fi
+done <"$testset"
+
